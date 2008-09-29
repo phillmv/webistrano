@@ -64,6 +64,10 @@ class Stage < ActiveRecord::Base
     
     @deployment_problems
   end
+
+  def qualified_name
+    "#{project.name} - #{name}"
+  end
   
   # tells wether a deployment is possible/allowed
   # by checking that all needed roles are present and some

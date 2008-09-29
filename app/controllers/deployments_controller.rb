@@ -29,8 +29,6 @@ class DeploymentsController < ApplicationController
 
   # GET /projects/1/stages/1/deployments/new
   def new
-    @deployment = @stage.deployments.new
-    @deployment.task = params[:task]
     
     if params[:repeat]
       @original = @stage.deployments.find(params[:repeat])
@@ -41,7 +39,6 @@ class DeploymentsController < ApplicationController
   # POST /projects/1/stages/1/deployments
   # POST /projects/1/stages/1/deployments.xml
   def create
-    @deployment = @stage.deployments.build(params[:deployment])
     @deployment.prompt_config = params[:deployment][:prompt_config] rescue {}    
     @deployment.user = current_user
 
@@ -100,18 +97,24 @@ class DeploymentsController < ApplicationController
   
   protected
   def ensure_deployment_possible
+    if params[:deployment]
+      @deployment = @stage.deployments.build(params[:deployment])
+    else
+      @deployment = @stage.deployments.new
+      @deployment.task = params[:task]
+    end
+ 
     if current_stage.deployment_possible?
         true
     else
-      respond_to do |format|  
-        flash[:error] = 'A deployment is currently not possible.'
+      respond_to do |format|
+        flash[:notice] = 'A deployment is currently not possible.'
         format.html { redirect_to project_stage_url(@project, @stage) }
-        format.xml  { render :xml => current_stage.deployment_problems.to_xml }
+        format.xml { render :xml => current_stage.deployment_problems.to_xml }
         false
       end
     end
-  end
-  
+  end 
   def set_auto_scroll
     if params[:auto_scroll].to_s == "false"
       @auto_scroll = false

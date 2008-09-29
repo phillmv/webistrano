@@ -13,13 +13,13 @@ ActiveRecord::Schema.define(:version => 20080925111006) do
 
   create_table "configuration_parameters", :force => true do |t|
     t.string   "name"
-    t.string   "value"
+    t.text     "value",            :limit => 255
     t.integer  "project_id"
     t.integer  "stage_id"
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "prompt_on_deploy", :default => 0
+    t.integer  "prompt_on_deploy",                :default => 0
   end
 
   create_table "deployments", :force => true do |t|
@@ -104,6 +104,11 @@ ActiveRecord::Schema.define(:version => 20080925111006) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "alert_emails"
+  end
+
+  create_table "stages_users", :id => false, :force => true do |t|
+    t.integer "user_id",  :null => false
+    t.integer "stage_id", :null => false
   end
 
   create_table "users", :force => true do |t|

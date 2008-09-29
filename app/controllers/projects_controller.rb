@@ -2,6 +2,7 @@ class ProjectsController < ApplicationController
   
   before_filter :load_templates, :only => [:new, :create, :edit, :update]
   before_filter :ensure_admin, :only => [:new, :edit, :destroy, :create, :update]
+  before_filter :load_project, :except => [:new, :dashboard, :index, :create]
   
   # GET /projects/dashboard
   def dashboard
@@ -27,8 +28,6 @@ class ProjectsController < ApplicationController
   # GET /projects/1
   # GET /projects/1.xml
   def show
-    @project = Project.find(params[:id])
-
     respond_to do |format|
       format.html # show.rhtml
       format.xml  { render :xml => @project.to_xml }
@@ -46,7 +45,6 @@ class ProjectsController < ApplicationController
 
   # GET /projects/1;edit
   def edit
-    @project = Project.find(params[:id])
   end
 
   # POST /projects
@@ -78,7 +76,6 @@ class ProjectsController < ApplicationController
   # PUT /projects/1
   # PUT /projects/1.xml
   def update
-    @project = Project.find(params[:id])
 
     respond_to do |format|
       if @project.update_attributes(params[:project])
@@ -95,7 +92,6 @@ class ProjectsController < ApplicationController
   # DELETE /projects/1
   # DELETE /projects/1.xml
   def destroy
-    @project = Project.find(params[:id])
     @project.destroy
 
     respond_to do |format|
@@ -122,5 +118,9 @@ class ProjectsController < ApplicationController
     else
       false
     end
+  end
+
+  def load_project
+    super(params[:id])
   end
 end

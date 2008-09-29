@@ -1,6 +1,8 @@
 require 'digest/sha1'
 class User < ActiveRecord::Base
   has_many :deployments, :dependent => :nullify, :order => 'created_at DESC'
+
+  has_and_belongs_to_many :stages
   
   # Virtual attribute for the unencrypted password
   attr_accessor :password
@@ -43,6 +45,16 @@ class User < ActiveRecord::Base
     crypted_password == encrypt(password)
   end
 
+  # These two methods allow controller before_filters to decide
+  # whether we should let the user see/use a given project/stage
+  def auth_project(project)
+    authorize(project, ".project")
+  end
+ 
+  def auth_stage(stage)
+    authorize(stage)
+  end
+  
   def remember_token?
     remember_token_expires_at && Time.now < remember_token_expires_at
   end
@@ -90,6 +102,16 @@ class User < ActiveRecord::Base
     self.deployments.find(:all, :limit => limit, :order => 'created_at DESC')
   end
 
+  # I should figure out the vernacular way of doing this.
+  def update_attributes(args = self.attributes)
+    if args[:stages] then
+      stages.delete_all
+      args[:stages].each { |s| stages << Stage.find(s.to_i) }
+    else
+      self.stages.delete_all
+    end
+    super(args)
+  end
   protected
     # before filter 
     def encrypt_password
@@ -101,6 +123,12 @@ class User < ActiveRecord::Base
     def password_required?
       crypted_password.blank? || !password.blank?
     end
-
-    
+    def authorize(obj, method = nil)
+      return true if admin?
+      rvalue = false
+      stages.each do |stg|
+        rvalue = true if eval( %{stg#{method} == obj })
+      end
+      rvalue
+    end
 end

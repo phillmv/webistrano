@@ -6,12 +6,13 @@ class UsersController < ApplicationController
   # GET /users.xml
   def index
     @users = User.find(:all, :order => 'login ASC')
-  end
+      end
 
   # GET /users/new
   def new
     # render new.rhtml
     @user = User.new
+    @stages = Stage.find(:all).sort { |x, y| x.id <=> y.id }
   end
 
   # POST /users
@@ -21,9 +22,9 @@ class UsersController < ApplicationController
     if current_user.admin?
       @user.admin = params[:user][:admin].to_i rescue 0
     end
-    
+    @stages = Stage.find(:all).sort { |x, y| x.name <=> y.name }  
     respond_to do |format|
-      if @user.save
+      if @user.update_attributes(params[:user])
         flash[:notice] = "Account created"
         format.html { redirect_to user_url(@user) }
         format.xml  { head :created, :location => user_url(@user) }
@@ -50,20 +51,21 @@ class UsersController < ApplicationController
   # GET /users/edit/1
   def edit
     @user = User.find(params[:id])
+    @stages = Stage.find(:all).sort { |x, y| x.id <=> y.id }
+    @user_stages = @user.stages.collect { |stg| stg.id }.flatten
   end
   
   # PUT /users/1
   # PUT /users/1.xml
   def update
     @user = User.find(params[:id])
-    @user.attributes = params[:user]
     
     if current_user.admin?
       @user.admin = params[:user][:admin].to_i rescue 0
     end
     
     respond_to do |format|
-      if @user.save
+      if @user.update_attributes(params[:user])
         flash[:notice] = 'User was successfully updated.'
         format.html { redirect_to user_url(@user) }
         format.xml  { head :ok }
