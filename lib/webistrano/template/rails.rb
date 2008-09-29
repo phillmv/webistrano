@@ -12,7 +12,7 @@ module Webistrano
       EOS
       
       TASKS = Webistrano::Template::Base::TASKS + <<-'EOS'
-         
+        load 'deploy'         
       EOS
     
     end

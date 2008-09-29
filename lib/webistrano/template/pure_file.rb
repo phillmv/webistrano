@@ -11,20 +11,6 @@ module Webistrano
       EOS
       
       TASKS = Webistrano::Template::Base::TASKS + <<-'EOS'
-      
-         namespace :deploy do
-           task :restart, :roles => :app, :except => { :no_release => true } do
-             # do nothing
-           end
-
-           task :start, :roles => :app, :except => { :no_release => true } do
-             # do nothing
-           end
-
-           task :stop, :roles => :app, :except => { :no_release => true } do
-             # do nothing
-           end
-         end
       EOS
     
     end

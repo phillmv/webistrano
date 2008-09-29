@@ -25,7 +25,7 @@ module Webistrano
       EOS
       
       TASKS = Webistrano::Template::Base::TASKS + <<-'EOS'
-      
+        load 'deploy'      
         namespace :webistrano do
           namespace :mongrel do
             [ :stop, :start, :restart ].each do |t|

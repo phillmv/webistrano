@@ -18,7 +18,7 @@ module Webistrano
       EOS
       
       TASKS = Webistrano::Template::Base::TASKS + <<-'EOS'
-      
+        load 'deploy'      
         namespace :webistrano do
           namespace :mod_rails do
             desc "start mod_rails & Apache"

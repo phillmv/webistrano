@@ -57,7 +57,6 @@ module Webistrano
     def execute!
       config = instantiate_configuration
       config.logger.level = options[:verbose]
-      config.load 'deploy'
 
       status = catch(:abort_called_by_capistrano){
         set_webistrano_logger(config)
@@ -256,8 +255,6 @@ module Webistrano
     # returns a list of all tasks defined for this deployer
     def list_tasks
       config = instantiate_configuration
-      config.load 'deploy'
-      
       set_up_config(config)
       
       config.task_list(:all)
