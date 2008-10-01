@@ -25,5 +25,10 @@ module StagesHelper
 
   end
 
-  
+  def stage_clone_form_path(stg)
+    "#{new_project_stage_path}?clone=#{stg.id}"
+  end
+  def stage_clone_path(stg)
+    "#{project_stages_path}?clone=#{stg.id}"
+  end
 end

@@ -97,6 +97,29 @@ class Stage < ActiveRecord::Base
     end
   end
   
+  def prepare_cloning(other)
+    self.name = "Clone of #{other.name}"
+    self.alert_emails = other.alert_emails
+  end
+
+  def clone(other)
+    self.deployments.destroy_all
+    self.configuration_parameters.destroy_all
+
+    other.configuration_parameters.each do |conf|
+      self.configuration_parameters << StageConfiguration.new(:name => conf.name, :value => conf.value, :prompt_on_deploy => conf.prompt_on_deploy)
+    end
+
+    self.project = other.project
+    other.recipes.each { |rcp| self.recipes << rcp }
+    other.roles.each { |rl| 
+      r = Role.new 
+      r.attributes = rl.attributes
+      self.roles << r
+      r.save 
+    }
+    self.reload
+  end
   # returns an array of all effective configurations that need a prompt
   def prompt_configurations
     res = effective_configuration.delete_if do |config|

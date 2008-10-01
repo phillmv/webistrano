@@ -25,6 +25,10 @@ class StagesController < ApplicationController
   # GET /projects/1/stages/new
   def new
     @stage = current_project.stages.new
+    if load_clone_original
+      @stage.prepare_cloning(@original)
+      render :action => 'clone' and return
+    end
   end
 
   # GET /projects/1/stages/1;edit
@@ -47,13 +51,21 @@ class StagesController < ApplicationController
   def create
     @stage = current_project.stages.build(params[:stage])
 
+    if load_clone_original
+      action_to_render = 'clone'
+    else
+      action_to_render = 'new'
+    end
+
     respond_to do |format|
       if @stage.save
+        @stage.clone(@original) if load_clone_original
+
         flash[:notice] = 'Stage was successfully created.'
         format.html { redirect_to project_stage_url(current_project, @stage) }
         format.xml  { head :created, :location => project_stage_url(current_project, @stage) }
       else
-        format.html { render :action => "new" }
+        format.html { render :action => action_to_render }
         format.xml  { render :xml => @stage.errors.to_xml }
       end
     end
@@ -112,7 +124,15 @@ class StagesController < ApplicationController
     end
   end
  protected
+ def load_clone_original
+   if params[:clone]
+     @original = Stage.find(params[:clone])
+   else
+     false
+   end
+ end
+
  def load_stage
    super(params[:id])
- end 
+ end
 end
