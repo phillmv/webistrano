@@ -154,6 +154,17 @@ class Stage < ActiveRecord::Base
       [{:name => "Error", :description => "Could not load tasks - syntax error in recipe definition?"}]
     end
   end
+
+  def list_menu
+    d = Deployment.new
+    d.stage = self
+    deployer = Webistrano::Deployer.new(d)
+    begin
+      deployer.list_tasks.collect { |t| { :name => t.fully_qualified_name, :display => t.name} if t.namespace.name == :webistrano }.compact
+    rescue
+      [{:name => "Error", :description => "Could not load tasks - syntax error in recipe definition?"}]
+    end
+  end
   
   protected
   def add_deployment_problem(key, desc)
