@@ -10,7 +10,7 @@ class Role < ActiveRecord::Base
   validates_inclusion_of :no_symlink, :in => 0..1
   validates_uniqueness_of :name, :scope => [:host_id, :stage_id, :ssh_port], :message => 'already used with this host.'
   
-  attr_accessible :name, :primary, :host_id, :no_release, :no_symlink, :ssh_port, :custom_name
+  attr_accessible :name, :primary, :host_id, :no_release, :no_symlink, :ssh_port, :custom_name, :user
   
   attr_accessor :custom_name
   
@@ -124,11 +124,7 @@ class Role < ActiveRecord::Base
   end
     
   def hostname_and_port
-    if self.ssh_port.blank?
-      self.host.name
-    else
-      "#{self.host.name}:#{self.ssh_port}"
-    end
+      "#{self.user.to_s + "@" unless self.user.blank?}#{self.host.name}#{":" + self.ssh_port.to_s unless self.ssh_port.blank? }"
   end
   
 end

@@ -9,22 +9,22 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20080925111006) do
+ActiveRecord::Schema.define(:version => 20081006184658) do
 
   create_table "configuration_parameters", :force => true do |t|
     t.string   "name"
-    t.text     "value",            :limit => 255
+    t.text     "value"
     t.integer  "project_id"
     t.integer  "stage_id"
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "prompt_on_deploy",                :default => 0
+    t.integer  "prompt_on_deploy", :default => 0
   end
 
   create_table "deployments", :force => true do |t|
     t.string   "task"
-    t.text     "log"
+    t.text     "log",               :limit => 2147483647
     t.integer  "stage_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -34,7 +34,7 @@ ActiveRecord::Schema.define(:version => 20080925111006) do
     t.string   "excluded_host_ids"
     t.string   "revision"
     t.integer  "pid"
-    t.string   "status",            :default => "running"
+    t.string   "status",                                  :default => "running"
   end
 
   create_table "deployments_roles", :id => false, :force => true do |t|
@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(:version => 20080925111006) do
     t.integer  "no_release", :default => 0
     t.integer  "ssh_port"
     t.integer  "no_symlink", :default => 0
+    t.string   "user"
   end
 
   create_table "stage_configurations", :force => true do |t|
