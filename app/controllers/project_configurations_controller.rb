@@ -1,6 +1,6 @@
 class ProjectConfigurationsController < ApplicationController
   
-  before_filter :load_project, :except => [:new, :dashboard, :index, :create]
+  before_filter :load_project, :except => [:dashboard, :index]
   
   # GET /projects/1/project_configurations/1
   # GET /projects/1/project_configurations/1.xml
