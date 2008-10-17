@@ -3,6 +3,13 @@ class ProjectConfiguration < ConfigurationParameter
   
   validates_presence_of :project
   validates_uniqueness_of :name, :scope => :project_id
+
+  after_save :write_capfile
+
+  def write_capfile
+    project.stages.each { |stg| stg.write_capfile }
+  end
+
   
   # default templates for Projects
   def self.templates

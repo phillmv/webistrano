@@ -9,6 +9,13 @@ class Host < ActiveRecord::Base
   attr_accessible :name
   
   before_validation :strip_whitespace
+
+  after_save :write_capfile
+  after_destroy :write_capfile
+
+  def write_capfile
+    roles.each { |r| r.stage.write_capfile } 
+  end
   
   def strip_whitespace
     self.name = self.name.strip rescue nil

@@ -9,9 +9,10 @@ class Project < ActiveRecord::Base
   validates_inclusion_of :template, :in => ProjectConfiguration.templates.keys
   
   after_create :create_template_defaults
+  after_destroy :delete_capfile
   
   attr_accessible :name, :description, :template
-  
+
   # creates the default configuration parameters based on the template
   def create_template_defaults
     unless template.blank?
@@ -72,5 +73,9 @@ class Project < ActiveRecord::Base
     
     self.reload
   end
-    
+
+  def delete_capfile
+    FileUtils.rm_rf("#{RAILS_ROOT}/capfile/#{self.name}")
+  end  
+
 end

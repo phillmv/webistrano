@@ -13,6 +13,13 @@ class Role < ActiveRecord::Base
   attr_accessible :name, :primary, :host_id, :no_release, :no_symlink, :ssh_port, :custom_name, :user
   
   attr_accessor :custom_name
+
+  after_save :write_capfile
+  after_destroy :write_capfile
+
+  def write_capfile
+    stage.write_capfile
+  end
   
   DEFAULT_NAMES = %w(app db web)
   

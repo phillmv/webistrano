@@ -1,6 +1,6 @@
 class Stage < ActiveRecord::Base  
   belongs_to :project
-  has_and_belongs_to_many :recipes
+  has_and_belongs_to_many :recipes, :after_add => :write_capfile, :after_remove => :write_capfile
   has_many :roles, :dependent => :destroy, :order => "name ASC"
   has_many :hosts, :through => :roles, :uniq => true
   has_many :configuration_parameters, :dependent => :destroy, :class_name => "StageConfiguration", :order => "name ASC"
@@ -15,7 +15,10 @@ class Stage < ActiveRecord::Base
   # fake attr (Hash) that hold info why deployment is not possible
   # (think model.errors lite)
   attr_accessor :deployment_problems
-  
+
+  after_save :write_capfile
+  after_destroy :delete_capfile
+    
   EMAIL_BASE_REGEX = '([^@\s\,\<\>\?\&\;\:]+)@((?:[\-a-z0-9]+\.)+[a-z]{2,})'
   EMAIL_REGEX = /^#{EMAIL_BASE_REGEX}$/i
     
@@ -164,6 +167,16 @@ class Stage < ActiveRecord::Base
     rescue
       [{:name => "Error", :description => "Could not load tasks - syntax error in recipe definition?"}]
     end
+  end
+
+  def write_capfile(foo = nil)
+     load "#{RAILS_ROOT}/lib/stage_capfile.rb"
+    StageCapfile.write self
+  end
+
+  def delete_capfile
+    load "#{RAILS_ROOT}/lib/stage_capfile.rb"
+    StageCapfile.delete self
   end
   
   protected

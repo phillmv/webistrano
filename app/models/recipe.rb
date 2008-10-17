@@ -1,14 +1,25 @@
 class Recipe < ActiveRecord::Base
-  has_and_belongs_to_many :stages
-  
+  has_and_belongs_to_many :stages   
   validates_uniqueness_of :name
   validates_presence_of :name, :body
   validates_length_of :name, :maximum => 250
 
   attr_accessible :name, :body, :description
   
-  version_fu 
+  version_fu
   
+  after_save :write_capfile
+  before_destroy :deleted_role_write_capfile
+
+  def write_capfile(foo = nil)
+    stages.each { |stg| stg.write_capfile }
+  end
+
+  def deleted_role_write_capfile
+    stages.each { |stg| stg.recipes.delete(self) }
+    write_capfile
+  end
+
   def validate
     check_syntax
   end

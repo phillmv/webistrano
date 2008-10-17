@@ -3,11 +3,11 @@
 # ================================================================
 
 <% @stage.roles.each do |role| %>
-  <% if role.role_attribute_hash.blank? -%>
+  <% if role.role_attribute_hash.blank? %>
   role :<%= role.name %>, <%= capfile_cast(role.hostname_and_port) %>
-  <% else -%>
+  <% else %>
   role :<%= role.name %>, <%= capfile_cast(role.hostname_and_port) %>, <%= role.role_attribute_hash.inspect %>
-  <% end -%>
+  <% end %>
 <% end %>
 
 # ================================================================
