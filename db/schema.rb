@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20081006184658) do
+ActiveRecord::Schema.define(:version => 20081023153329) do
 
   create_table "configuration_parameters", :force => true do |t|
     t.string   "name"
@@ -42,6 +42,13 @@ ActiveRecord::Schema.define(:version => 20081006184658) do
     t.integer "role_id"
   end
 
+  create_table "executing_tasks", :force => true do |t|
+    t.integer  "stage_id"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "hosts", :force => true do |t|
     t.string   "name"
     t.datetime "created_at"
@@ -57,6 +64,11 @@ ActiveRecord::Schema.define(:version => 20081006184658) do
     t.string   "template"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "projects_users", :id => false, :force => true do |t|
+    t.integer "project_id", :null => false
+    t.integer "user_id",    :null => false
   end
 
   create_table "recipe_versions", :force => true do |t|
@@ -94,6 +106,18 @@ ActiveRecord::Schema.define(:version => 20081006184658) do
     t.integer  "ssh_port"
     t.integer  "no_symlink", :default => 0
     t.string   "user"
+  end
+
+  create_table "scheduled_deployments", :force => true do |t|
+    t.string   "task"
+    t.string   "schedule"
+    t.integer  "stage_id"
+    t.string   "status"
+    t.integer  "user_id"
+    t.datetime "next"
+    t.integer  "job_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "stage_configurations", :force => true do |t|

@@ -1,0 +1,14 @@
+
+= CREDITS.txt
+
+== Feedback
+
+- Yi Wen, for lib/rufus-scheduler.rb
+- Adam Green and Rael Dornfest for the Taskr breaking issue feedback
+- Sean Liu, unschedule_every issue
+- Manfred Usselman (no cronjobs on sundays bug)
+- Michael Goth, tests with precision > 1s
+
+* many people gave feedback previously, see
+  http://openwferu.rubyforge.org/svn/trunk/openwfe-ruby/CREDITS.txt
+

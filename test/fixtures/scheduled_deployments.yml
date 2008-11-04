@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  task: MyString
+  schedule: MyString
+  stage_id: 1
+  status: MyString
+  user_id: 1
+  next: 2008-10-23
+  job_id: 1
+
+two:
+  task: MyString
+  schedule: MyString
+  stage_id: 1
+  status: MyString
+  user_id: 1
+  next: 2008-10-23
+  job_id: 1

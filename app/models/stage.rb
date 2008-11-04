@@ -5,7 +5,7 @@ class Stage < ActiveRecord::Base
   has_many :hosts, :through => :roles, :uniq => true
   has_many :configuration_parameters, :dependent => :destroy, :class_name => "StageConfiguration", :order => "name ASC"
   has_many :deployments, :dependent => :destroy, :order => "created_at DESC"
-  
+  has_many :scheduled_deployments 
   validates_uniqueness_of :name, :scope => :project_id
   validates_length_of :name, :maximum => 250
   validates_presence_of :project, :name

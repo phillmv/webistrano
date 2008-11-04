@@ -1,0 +1,25 @@
+<% if @stage.scheduled_deployments.empty? %>
+  <p>
+  No scheduled deployments for this stage. A scheduled deployment will execute new deployments around a cron schedule. Please add a scheduled deployment.
+  </p>
+<% else %>
+  <table class="sortable">
+    <tr>
+      <th width="25%">Task</th>
+      <th width="25%">Schedule</th>
+      <th width="10%">User</th>
+      <th width="15%">Status</th>
+      <th width="25%">Next deploy</th>
+    </tr>
+    <% for sdeploy in @stage.scheduled_deployments %>
+      <tr class="<%= cycle :even, :odd, :name => "scheduled deployments" %>">
+        <td><%= link_to h(sdeploy.task), project_stage_scheduled_deployment_path(@project, @stage, sdeploy) %></td>
+        <td><%= h sdeploy.schedule %></td>
+        <td><%= h sdeploy.user.login %></td>
+        <td><%= sdeploy.status %></td>
+        <td><%= sdeploy.next.strftime "%H:%M %b %d %Y" %></td>
+        <td><%= link_to 'Delete', project_stage_scheduled_deployment_path(@project, @stage, sdeploy), :confirm => 'Are you sure?', :method => :delete %></td> 
+      </tr>
+    <% end %>
+  </table>
+<% end %>

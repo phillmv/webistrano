@@ -1,0 +1,21 @@
+<p>
+<table border="0" >
+  <tr>
+    <td>
+      <b>Task</b><br />
+    </td>
+    <td>
+      <b>Schedule</b><br />
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <%= select "scheduled_deployment", "task", @task_list %>
+    </td>
+    <td>
+      <%= text_field 'scheduled_deployment', 'schedule', :style => 'width:150px;' %>
+    </td>
+  </tr>
+</table><br />
+</p>
+
