@@ -1329,7 +1329,6 @@ module Rufus
 	  # always return the time in the server timezone
 	  return @cron_line.next_time(from) - @tz_offset
         end
-	puts "i ain't getting executed"
         @cron_line.next_time(from)
       end
 
