@@ -1250,13 +1250,37 @@ module Rufus
       #
       attr_accessor :cron_line
 
-      attr_accessor :offset
+      attr_accessor :tz_offset
 
       def initialize (scheduler, cron_id, line, params,  &block)
 
         super(scheduler, cron_id, params, &block)
 
-        @offset = params[:offset] # offset from UTC being the implied notion here
+	# This library calculates the correct time to trigger a job
+	# by comparing the current Time against the cron line, and if there
+	# is a match, executing the job.
+	#
+	# This works fine with at and every tasks, as they are relative -
+	# "in three days and five minutes execute the following" will
+	# yield the correct time, regardless of any time zone mismatch
+	# between the server and the issuing user.
+	#
+	# However, cron strings set 'static' schedules - "every fifteenth
+	# hour on a Friday execute the following". So, if a user sitting in
+	# EST sets that, and the server running this library is set to UTC,
+	# she probably wants it to execute at three o'clock her time, 
+	# instead of ten in the morning. If she sets a schedule for 10 pm
+	# Thursdays it will actually execute at 5pm, and so on. 
+	#
+	# The best way I could think of solving this problem is by having 
+	# the library keep track of a user-supplied offset. I am not fond 
+	# of this solution, something tells me this time zone conversion
+	# should occur in the code calling this library, but I can't think
+	# of a better way of addressing it at the moment, short of silently
+	# regenerating the cron strings to match the timezone difference.
+	# -- Phill MV, Symcor 2008/11/05
+
+        @tz_offset = params[:tz_offset] 
 
         if line.is_a?(String)
 
@@ -1279,10 +1303,7 @@ module Rufus
       # has to fire this CronJob instance.
       #
       def matches? (time)
-      #def matches? (time, precision)
-
-        #@cron_line.matches?(time, precision)
-        time = time + @offset if time.kind_of?(Time) and !@offset.nil?
+        time = time + @tz_offset if time.kind_of?(Time) and !@tz_offset.nil?
         @cron_line.matches?(time)
       end
 
@@ -1302,11 +1323,14 @@ module Rufus
       # 'from' is used to specify the starting point for determining
       # what will be the next time. Defaults to now.
       #
-      def next_time (from=nil)
-        if from.nil?
-          from = @offset.nil? ? Time.now : Time.now + @offset
+      def next_time (from = Time.now)
+        if !@tz_offset.nil?
+          from = from + @tz_offset
+	  # always return the time in the server timezone
+	  return @cron_line.next_time(from) - @tz_offset
         end
-        @offset.nil? ? @cron_line.next_time(from) : @cron_line.next_time(from) - @offset
+	puts "i ain't getting executed"
+        @cron_line.next_time(from)
       end
 
       protected

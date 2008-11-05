@@ -17,7 +17,7 @@
         <td><%= h sdeploy.schedule %></td>
         <td><%= h sdeploy.user.login %></td>
         <td><%= sdeploy.status %></td>
-        <td><%= sdeploy.next.strftime "%H:%M %b %d %Y" %></td>
+        <td><%= sdeploy.nil? ? "unknown" : sdeploy.next.strftime("%H:%M %b %d %Y") %></td>
         <td><%= link_to 'Delete', project_stage_scheduled_deployment_path(@project, @stage, sdeploy), :confirm => 'Are you sure?', :method => :delete %></td> 
       </tr>
     <% end %>

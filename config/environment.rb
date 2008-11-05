@@ -102,5 +102,5 @@ ENV['TZ'] = 'UTC'
 Time.zone = 'UTC'
 
 # recreate stage capfiles on startup in case of cold boots with preexisting data, etc
-load "#{RAILS_ROOT}/lib/stage_capfile.rb"
-Stage.find(:all).each { |stg| stg.write_capfile }
+#load "#{RAILS_ROOT}/lib/stage_capfile.rb"
+#Stage.find(:all).each { |stg| stg.write_capfile }

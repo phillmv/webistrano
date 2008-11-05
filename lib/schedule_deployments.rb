@@ -1,32 +1,33 @@
 #!/usr/bin/env ruby 
 require File.dirname(__FILE__) + '/../config/environment.rb'
-$: << File.expand_path(File.dirname(__FILE__) + "/../vendor/plugins/rufus-scheduler-1.0.11")
 require 'rufus/scheduler'
-require 'ruby-debug'
 
 @logger = Logger.new("#{RAILS_ROOT}/log/scheduler.#{RAILS_ENV}.log")
 
 @scheduler = Rufus::Scheduler.start_new
 
-def schedule(sdeploy)
-  @logger.info "adding #{sdeploy.task} method"
+def schedule(sdeploy, startup = nil)
+  @logger.info "#{sdeploy.user.login} is scheduling #{sdeploy.task} on #{sdeploy.schedule}"
   begin
 
-    job = @scheduler.schedule(sdeploy.schedule,  :tags => sdeploy.id, :offset => ActiveSupport::TimeZone.new(sdeploy.user.time_zone).utc_offset ) { 
-      |job_id, at, params|
-      @logger.warn "executing scheduled task #{sdeploy.task}"
+    # Webistrano is running Time.zone = "UTC"
+    tz_offset = ActiveSupport::TimeZone.new(sdeploy.user.time_zone).utc_offset
 
+    job = @scheduler.schedule(sdeploy.schedule,  :tags => sdeploy.id, :tz_offset => tz_offset) { 
+      |job_id, at, params|
+      @logger.warn "#{Time.now} Executing #{sdeploy.user.login}'s #{sdeploy.task}"
+
+      # new deployment house keeping
       deployment = sdeploy.stage.deployments.new
       deployment.task = sdeploy.task
-      deployment.description = "Scheduled deployment"
+      deployment.description = "Deployment scheduled on #{sdeploy.updated_at}"
       deployment.user = sdeploy.user
 
       begin
         deployment.save!
         @logger.info "about to deploy"
-        sdeploy.next = @scheduler.get_job(job_id).next_time
+        sdeploy.next = @scheduler.get_job(job_id).next_time.in_time_zone sdeploy.user.time_zone
         sdeploy.save
-        puts "deploy after this one will occur at #{@scheduler.get_job(job_id).next_time}"
         deployment.deploy_in_background!
       rescue Exception => e
         @logger.warn e
@@ -34,23 +35,17 @@ def schedule(sdeploy)
         sdeploy.save
         @scheduler.unschedule(sdeploy)
       end
-
     }
+
     sdeploy.status = "accepted"
     sdeploy.next = job.next_time
-    puts "just scheduled a new job to run at #{ sdeploy.next }"
-    puts "this is how it will get formatted: #{ sdeploy.next.strftime "%H:%M %b %d %Y"}"
-
-#    @logger.warn "size of thingy #{@scheduler.find_jobs(sdeploy.id).size}"
-#    sdeploy.next = @scheduler.get_job(job_id).next_time
     sdeploy.save
-    puts "this is how it will get formatted: #{ sdeploy.next.strftime "%H:%M %b %d %Y"}"
   rescue Exception => e
     @logger.warn e
     sdeploy.status = "rejected"
     sdeploy.save
   end
-  Notification.deliver_scheduled_deployment(sdeploy)
+  Notification.deliver_scheduled_deployment(sdeploy) unless startup
 end
 
 
@@ -63,17 +58,17 @@ end
 
 #startup
 begin 
-  @logger.info "rescheduling previously accepted schedules, if any"
+  @logger.info "Starting #{Time.now}\nRescheduling previously accepted schedules, if any"
 
   ScheduledDeployment.find(:all, 
                            :conditions => { :status => "accepted" }).each { |s|
-    schedule(s) 
+    schedule(s, true) 
   }
 rescue Exception => e
+  # what can we do, really?
   @logger.warn e
 end
 
-puts "size of schedules #{@scheduler.cron_job_count}"
 @logger.info "starting loop"
 
 loop do
@@ -99,6 +94,5 @@ loop do
   rescue Exception => e
     @logger.warn e
   end
-
-  sleep 5
+  sleep 10
 end
