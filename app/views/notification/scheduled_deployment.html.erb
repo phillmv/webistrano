@@ -1,0 +1,3 @@
+This email is to notify you that <%= "#{@scheduled_deployment.stage.project.name}/#{@scheduled_deployment.stage.name}/#{@scheduled_deployment.task}" %> has been <%= @scheduled_deployment.status %>. 
+<% if @scheduled_deployment.status == "accepted" then %>The next deployment will occur at <%= @scheduled_deployment.next.in_time_zone @scheduled_deployment.user.time_zone %><% elsif @scheduled_deployment.status == "rejected" then %>Your cron string is probably invalid. Please revise it and resubmit the job.<% elsif @scheduled_deployment.status == "failed" %>The deployment of the task has failed, and the deployment unscheduled. Please revise; the recipe the task refers to may have been removed from the stage, or your roles may have been changed, etc. <% end %>
+

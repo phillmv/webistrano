@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby 
+
+ENV['RAILS_ENV'] = ARGV[0] || 'development'
+
 require File.dirname(__FILE__) + '/../config/environment.rb'
 require 'rufus/scheduler'
 
@@ -6,8 +9,8 @@ require 'rufus/scheduler'
 
 @scheduler = Rufus::Scheduler.start_new
 
-def schedule(sdeploy, startup = nil)
-  @logger.info "#{sdeploy.user.login} is scheduling #{sdeploy.task} on #{sdeploy.schedule}"
+def schedule(sdeploy, email = nil)
+  @logger.info "\n#{sdeploy.user.login} is scheduling #{sdeploy.task} on #{sdeploy.schedule}"
   begin
 
     # Webistrano is running Time.zone = "UTC"
@@ -20,20 +23,21 @@ def schedule(sdeploy, startup = nil)
       # new deployment house keeping
       deployment = sdeploy.stage.deployments.new
       deployment.task = sdeploy.task
-      deployment.description = "Deployment scheduled on #{sdeploy.updated_at}"
+      deployment.description = "Deployment scheduled on #{sdeploy.updated_at.in_time_zone sdeploy.user.time_zone}"
       deployment.user = sdeploy.user
 
       begin
         deployment.save!
         @logger.info "about to deploy"
-        sdeploy.next = @scheduler.get_job(job_id).next_time.in_time_zone sdeploy.user.time_zone
+        sdeploy.next = @scheduler.get_job(job_id).next_time 
         sdeploy.save
         deployment.deploy_in_background!
       rescue Exception => e
         @logger.warn e
-        sdeploy.status = "deployment failure"
+        sdeploy.status = "failed"
         sdeploy.save
-        @scheduler.unschedule(sdeploy)
+        @scheduler.get_job(job_id).unschedule
+        Notification.deliver_scheduled_deployment(sdeploy)
       end
     }
 
@@ -45,7 +49,7 @@ def schedule(sdeploy, startup = nil)
     sdeploy.status = "rejected"
     sdeploy.save
   end
-  Notification.deliver_scheduled_deployment(sdeploy) unless startup
+  Notification.deliver_scheduled_deployment(sdeploy) unless email
 end
 
 
@@ -58,7 +62,7 @@ end
 
 #startup
 begin 
-  @logger.info "Starting #{Time.now}\nRescheduling previously accepted schedules, if any"
+  @logger.info "\n\n******\nStarting #{Time.now}\nRescheduling previously accepted schedules, if any"
 
   ScheduledDeployment.find(:all, 
                            :conditions => { :status => "accepted" }).each { |s|

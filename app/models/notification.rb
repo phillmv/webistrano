@@ -17,8 +17,8 @@ class Notification < ActionMailer::Base
 
   def scheduled_deployment(sdeploy)
     @subject    = "Schedule for #{sdeploy.task} has been #{sdeploy.status}"
-    @body       = "This email is to notify you that #{sdeploy.stage.project.name}/#{sdeploy.stage.name}/#{sdeploy.task} has been #{sdeploy.status}. #{ if sdeploy.status == "accepted" then "The next deployment will occur at " + sdeploy.next.to_s + "." end }"
-    @recipients = sdeploy.stage.alert_emails
+    @body       = {:scheduled_deployment => sdeploy}
+    @recipients = sdeploy.user.email
     @from       = @@webistrano_sender_address
     @sent_on    = Time.now
     @headers    = {}

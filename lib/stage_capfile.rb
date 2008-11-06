@@ -22,6 +22,7 @@ module StageCapfile
   end
 
   def delete(stage)
+    @stage = stage
     FileUtils.rm_rf("#{RAILS_ROOT}/capfile/#{@stage.project.name}/#{@stage.name}")
   end
 

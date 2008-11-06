@@ -100,7 +100,3 @@ File.delete("#{RAILS_ROOT}/public/stylesheets/application.css") if File.exists?(
 # set default time_zone to UTC
 ENV['TZ'] = 'UTC'
 Time.zone = 'UTC'
-
-# recreate stage capfiles on startup in case of cold boots with preexisting data, etc
-#load "#{RAILS_ROOT}/lib/stage_capfile.rb"
-#Stage.find(:all).each { |stg| stg.write_capfile }

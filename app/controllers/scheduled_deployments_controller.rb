@@ -25,6 +25,7 @@ class ScheduledDeploymentsController < ApplicationController
 
     respond_to do |format|
       if @scheduled_deployment.update_attributes(params[:scheduled_deployment])
+        flash[:notice] = 'The scheduled deployment has been updated. You will receive an email shortly'
         format.html { redirect_to project_stage_url(@project, @stage)}
       else
         flash[:notice] = 'You must select a task and insert a valid cron string'

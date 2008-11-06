@@ -18,6 +18,7 @@ class Stage < ActiveRecord::Base
 
   after_save :write_capfile
   after_destroy :delete_capfile
+  after_destroy :remove_scheduled_deployments
     
   EMAIL_BASE_REGEX = '([^@\s\,\<\>\?\&\;\:]+)@((?:[\-a-z0-9]+\.)+[a-z]{2,})'
   EMAIL_REGEX = /^#{EMAIL_BASE_REGEX}$/i
@@ -177,6 +178,10 @@ class Stage < ActiveRecord::Base
   def delete_capfile
     load "#{RAILS_ROOT}/lib/stage_capfile.rb"
     StageCapfile.delete self
+  end
+
+  def remove_scheduled_deployments
+    self.scheduled_deployments.each { |sdeploy| sdeploy.status = 'remove'; sdeploy.save }
   end
   
   protected
