@@ -122,7 +122,7 @@ class User < ActiveRecord::Base
     end
     
     def password_required?
-      crypted_password.blank? || !password.blank?
+      WebistranoConfig[:authentication_method] != :cas && (crypted_password.blank? || !password.blank?)
     end
     def authorize(obj, method = nil)
       return true if admin?
