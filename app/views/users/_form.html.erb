@@ -28,7 +28,7 @@
   <p>
   <b>Select stages (control + click for multiple/unselection)</b> <br/>
   <select name="user[stages][]" size="5" multiple <%= %{disabled} if @stages.empty? %>>
-    <%= options_from_collection_for_select(@stages, "id", "qualified_name", @user_stages ) %>
+    <%= options_from_collection_for_select(@stages.sort { |a, b| a.qualified_name <=> b.qualified_name } , "id", "qualified_name", @user_stages ) %>
     <%= "<option value =\"\" selected=\"selected\">You have to set up stages first!</option>" if @stages.empty? %>
     </select>
   </p>

@@ -7,7 +7,7 @@ class Notification < ActionMailer::Base
   end
 
   def deployment(deployment, email)
-    @subject    = "Deployment of #{deployment.stage.project.name}/#{deployment.stage.name} finished: #{deployment.status}"
+    @subject    = "Deployment of #{deployment.stage.project.name}/#{deployment.stage.name}/#{deployment.task} finished: #{deployment.status}"
     @body       = {:deployment => deployment}
     @recipients = email
     @from       = @@webistrano_sender_address

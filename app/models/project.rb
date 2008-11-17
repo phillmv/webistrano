@@ -11,7 +11,31 @@ class Project < ActiveRecord::Base
   after_create :create_template_defaults
   after_destroy :delete_capfile
   
-  attr_accessible :name, :description, :template
+  attr_accessible :name, :description, :template, :alert_emails
+
+  EMAIL_BASE_REGEX = '([^@\s\,\<\>\?\&\;\:]+)@((?:[\-a-z0-9]+\.)+[a-z]{2,})'
+  EMAIL_REGEX = /^#{EMAIL_BASE_REGEX}$/i
+    
+  def validate
+    unless self.alert_emails.blank?
+      self.alert_emails.split(" ").each do |email|
+        unless email.match(EMAIL_REGEX)
+          self.errors.add('alert_emails', 'format is not valid, please seperate email addresses by space') 
+          break
+        end
+      end
+    end
+  end
+
+  def emails
+    if self.alert_emails.blank?
+      []
+    else
+      self.alert_emails.split(" ")
+    end
+  end
+
+
 
   # creates the default configuration parameters based on the template
   def create_template_defaults

@@ -15,7 +15,7 @@ class StagesController < ApplicationController
   # GET /projects/1/stages/1.xml
   def show
     @task_list = [['All tasks: ', '']] + @stage.list_tasks.collect{|task| [task[:name], task[:name]]}.sort()
-    @stage_menu = @stage.list_menu
+    @stage_menu = @stage.list_menu.sort { |a, b| a[:display].to_s <=> b[:display].to_s }
 
     respond_to do |format|
       format.html # show.rhtml

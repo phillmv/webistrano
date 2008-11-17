@@ -24,7 +24,12 @@
 		<p>
 		  <b>Project Type:</b>
 		  <%=h @project.template %>
+                </p>
+                <p>
+		  <b>Alert on deploy:</b>
+		  <%=h @project.alert_emails %>
 		</p>
+
 		<p>
     <b>#Deployments:</b>
 	  <%=h @project.deployments.count %>

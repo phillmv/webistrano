@@ -6,7 +6,11 @@
 <p>
   <b>Project Type</b><br />
   <%= select('project', 'template', @templates, { :include_blank => false }) %>
-</p>
+  </p>
+  <p>
+  <b>Alert these emails on deploy</b> (separated by space)<br />
+  <%= text_field 'project', :alert_emails, :style => 'width:330px' %>
+  </p>
 <p>
   <b>Description</b><br />
   <%= text_area 'project', 'description', :style =>'width:330px; height: 100px' %>

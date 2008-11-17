@@ -36,11 +36,13 @@ class Stage < ActiveRecord::Base
   
   # wrapper around alert_emails, returns an array of email addresses
   def emails
-    if self.alert_emails.blank?
-      []
-    else
-      self.alert_emails.split(" ")
-    end
+    return project.emails.concat self.alert_emails.split(" ") unless self.alert_emails.blank?
+    return project.emails
+#    if self.alert_emails.blank?
+ #     []
+  #  else
+   #   self.alert_emails.split(" ")
+    #end
   end
   
   # returns an array of ConfigurationParameters that is a result of the projects configuration overridden by the stage config 

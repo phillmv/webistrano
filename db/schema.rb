@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20081023153329) do
+ActiveRecord::Schema.define(:version => 20081110193012) do
 
   create_table "configuration_parameters", :force => true do |t|
     t.string   "name"
@@ -64,6 +64,7 @@ ActiveRecord::Schema.define(:version => 20081023153329) do
     t.string   "template"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "alert_emails"
   end
 
   create_table "projects_users", :id => false, :force => true do |t|
