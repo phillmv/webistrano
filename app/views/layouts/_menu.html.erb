@@ -6,7 +6,7 @@
 
 <%= render(:partial => 'layouts/menu_box', :locals => {
                                              :box_type => 'hosts', 
-                                             :status => controller_in_use_or(HostsController, :open, Host), 
+                                             :status => controller_in_use_or(HostsController, :closed, Host), 
                                              :path => hosts_path } )%>
 
 <%= render(:partial => 'layouts/menu_box', :locals => {
