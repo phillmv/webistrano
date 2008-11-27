@@ -6,9 +6,9 @@ Revision: <%= @deployment.revision %>
 
 Status: <%= @deployment.status %>
 
-Started (UTC): <%= @deployment.created_at.utc.to_s(:log) %>
+Started: <%= @deployment.created_at.in_time_zone(@deployment.user.time_zone).to_s(:log) %>
 
-Completed (UTC): <%= @deployment.completed_at.utc.to_s(:log) rescue nil %>
+Completed: <%= @deployment.completed_at.in_time_zone(@deployment.user.time_zone).to_s(:log) rescue nil %>
 
 
 Deployed by: <%= @deployment.user.login %>
