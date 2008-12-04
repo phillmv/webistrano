@@ -4,9 +4,8 @@
       <tr>
         <td class="lineno">
           <%= counter = 0
-          recipe.body.each_line { |ln| counter = counter + 1}
           str = nil
-          (1..counter).each { |i| str = "#{str} #{i}<br/>" }
+          recipe.body.each_line { |ln| str = "#{str} #{(counter = counter + 1)}<br/>" } unless recipe.body.nil?
           str  %>
         </td>
         <td width="100%">
