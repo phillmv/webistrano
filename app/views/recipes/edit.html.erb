@@ -1,12 +1,18 @@
 <% form_for(:recipe, :url => recipe_path(@recipe), :html => { :method => :put }) do |f| %>
 
+  
+  <p>
+  <%= submit_tag "Update" %>
+  </p>
+
   <%= render(:partial => 'form')%>
 
   <%= link_to 'Back to recipe', recipe_path(@recipe), :class => 'arrow_link ontheright'%>
-
   <p>
-    <%= submit_tag "Update" %>
+  <%= submit_tag "Update" %>
   </p>
+
+
 <% end %>
 
 
