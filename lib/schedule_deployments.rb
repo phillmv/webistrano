@@ -64,10 +64,7 @@ end
 begin 
   @logger.info "\n\n******\nStarting #{Time.now}\nRescheduling previously accepted schedules, if any"
 
-  ScheduledDeployment.find(:all, 
-                           :conditions => { :status => "accepted" }).each { |s|
-    schedule(s, true) 
-  }
+  ScheduledDeployment.find(:all, :conditions => { :status => "accepted" }).each { |s| schedule(s, true) }
 rescue Exception => e
   # what can we do, really?
   @logger.warn e
@@ -91,7 +88,7 @@ loop do
     }
 
     ScheduledDeployment.find(:all, 
-                             :conditions => { :status => "remove" }).each { |s| 
+                             :conditions => "status = 'pending' or status = 'failed'").each { |s| 
       unschedule(s)
       s.destroy
     }

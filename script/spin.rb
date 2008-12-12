@@ -22,7 +22,7 @@ if (first = ARGV.shift) == "up"
   require 'commands/server'
 elsif first == "down"
   printf "Sending SIGKILL to mongrel... "
-  if system "cd #{File.dirname(__FILE__)}/.. && kill -9 `cat tmp/pid/mongrel.pid` && rm tmp/pid/mongrel.pid" then 
+  if system "cd #{File.dirname(__FILE__)}/.. && kill -9 `cat tmp/pids/mongrel.pid` && rm tmp/pids/mongrel.pid" then 
     puts "done." 
   else 
     puts "unsuccesful." 
