@@ -5,7 +5,7 @@
 # ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.0.2' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.1.0' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -76,7 +76,7 @@ end
 
 # Include your application configuration below
 
-WEBISTRANO_VERSION = '1.4'
+WEBISTRANO_VERSION = '20081212'
 
 ActiveSupport::CoreExtensions::Time::Conversions::DATE_FORMATS.update(:log => '%Y-%m-%d %H:%M')
 ActiveSupport::CoreExtensions::Time::Conversions::DATE_FORMATS.update(:date_with_day => '%Y-%m-%d')
