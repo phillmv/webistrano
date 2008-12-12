@@ -16,7 +16,7 @@
     <% @stage.prompt_configurations.each do |conf| %>
       <p>
         <b>Config: <%=h conf.name %></b><br />
-        <input type="<%=h input_type(conf.name) %>" id="deployment_prompt_config_<%=h conf.name %>" name="deployment[prompt_config][<%=h conf.name %>]" style="width:330px;" value="<%=h conf.value %>"  onFocus="if (this.value == '<%=h conf.value%>') { this.value = '' }"/>
+        <input type="<%=h input_type(conf.name) %>" id="deployment_prompt_config_<%=h conf.name %>" name="deployment[prompt_config][<%=h conf.name %>]" style="width:330px;" value="<%=h conf.value %>" />
       </p>
     <% end %>
   <% end %>
