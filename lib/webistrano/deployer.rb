@@ -62,9 +62,13 @@ module Webistrano
         set_webistrano_logger(config)
         
         set_up_config(config)
-        
-        exchange_real_revision(config) unless (config.fetch(:scm).to_s == 'git') # git cannot do a local query by default
-        save_revision(config)
+       
+        # Phill commented out this line, because, well
+        # We don't care about the svn revisions. It is more annoying
+        # than anything.
+
+        #exchange_real_revision(config) unless (config.fetch(:scm).to_s == 'git') # git cannot do a local query by default
+        #save_revision(config)
         save_pid
         
         config.trigger(:load)
